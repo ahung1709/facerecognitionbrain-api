@@ -15,12 +15,6 @@ const db = knex({
         ssl: {
             rejectUnauthorized: false
         }            
-        // ssl: true,
-    //   host : process.env.DATABASE_URL, //127.0.0.1 if it is localhost
-    //   port : 5432,
-    //   user : 'aaronhung',
-    //   password : '',
-    //   database : 'smart-brain'
     }
 });
 
