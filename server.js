@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const knex = require('knex');
+const morgan = require('morgan');
 
 require('dotenv').config();
 
@@ -10,18 +11,34 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
+let connection = null;
+
+// 1. Docker Compose local database
+if (process.env.POSTGRES_URI) {
+  connection = process.env.POSTGRES_URI;
+
+  // 2. Heroku Postgres OR local development using Heroku DB
+} else if (process.env.DATABASE_URL) {
+  connection = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  };
+
+  // 3. No DB configured
+} else {
+  console.log('ERROR: No database connection string found.');
+  console.log('Expected POSTGRES_URI (Docker) or DATABASE_URL (Heroku).');
+  process.exit(1);
+}
+
 const db = knex({
   client: 'pg',
-  connection: {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  },
+  connection,
 });
 
 const app = express();
 
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(cors());
 
