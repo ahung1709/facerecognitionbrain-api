@@ -6,15 +6,23 @@ const morgan = require('morgan');
 
 require('dotenv').config();
 
+const { connectRedis } = require('./services/redis');
+
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const auth = require('./controllers/authorization');
 
+// Redis connection
+connectRedis()
+  .then(() => console.log('Redis ready'))
+  .catch(console.error);
+
+// Postgres connection
 let connection = null;
 
-// 1. Docker Compose local database
+// 1. Docker Compose local Postgres database
 if (process.env.POSTGRES_URI) {
   connection = process.env.POSTGRES_URI;
 
