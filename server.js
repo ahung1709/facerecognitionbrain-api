@@ -47,6 +47,7 @@ app.get('/', (req, res) => {
   res.send('it is working!');
 });
 app.post('/signin', signin.signinAuthentication(db, bcrypt));
+app.post('/signout', signin.handleSignout);
 app.post('/register', (req, res) => {
   register.handleRegister(req, res, db, bcrypt);
 });

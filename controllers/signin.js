@@ -87,8 +87,25 @@ const signinAuthentication = (db, bcrypt) => (req, res) => {
         .catch((err) => res.status(400).json(err));
 };
 
+const handleSignout = async (req, res) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return res.status(400).json('No token provided');
+  }
+
+  try {
+    await redisClient.del(authorization);
+    return res.json({ success: 'true' });
+  } catch (err) {
+    console.error('Signout error:', err);
+    return res.status(400).json('unable to sign out');
+  }
+};
+
 module.exports = {
   signinAuthentication,
+  handleSignout,
   createSessions,
-  redisClient: redisClient,
+  redisClient,
 };
