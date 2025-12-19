@@ -1,4 +1,4 @@
-const { redisClient } = require('../services/redis');
+const { getSession } = require('./session');
 
 const requireAuth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -8,16 +8,16 @@ const requireAuth = async (req, res, next) => {
   }
 
   try {
-    const reply = await redisClient.get(authorization);
+    const userId = await getSession(authorization);
 
-    if (!reply) {
+    if (!userId) {
       return res.status(401).json('Unauthorized');
     }
 
     console.log('you shall pass');
     return next();
   } catch (err) {
-    console.error('Authorization error:', err);
+    console.error('Auth middleware error:', err);
     return res.status(401).json('Unauthorized');
   }
 };

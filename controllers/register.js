@@ -1,4 +1,4 @@
-const { createSessions } = require('./signin');
+const { createSession } = require('../auth');
 
 const handleRegister = (req, res, db, bcrypt) => {
   const { email, name, password } = req.body;
@@ -26,7 +26,7 @@ const handleRegister = (req, res, db, bcrypt) => {
       })
       .then((users) => {
         const user = users[0];
-        return createSessions(user);
+        return createSession(user);
       })
       .then((session) => {
         res.json(session);
