@@ -1,4 +1,9 @@
-const { createSession, getSession, deleteSession } = require('../auth');
+const {
+  createSession,
+  getSession,
+  deleteSession,
+  getTokenFromHeader,
+} = require('../auth');
 
 const handleSignin = (db, bcrypt, req, res) => {
   const { email, password } = req.body;
@@ -28,10 +33,10 @@ const handleSignin = (db, bcrypt, req, res) => {
 };
 
 const getAuthTokenId = async (req, res) => {
-  const { authorization } = req.headers;
+  const token = getTokenFromHeader(req.headers.authorization);
 
   try {
-    const reply = await getSession(authorization);
+    const reply = await getSession(token);
 
     if (!reply) {
       return res.status(400).json('Unauthorized');
@@ -44,10 +49,10 @@ const getAuthTokenId = async (req, res) => {
 };
 
 const signinAuthentication = (db, bcrypt) => async (req, res) => {
-  const { authorization } = req.headers;
+  const token = getTokenFromHeader(req.headers.authorization);
 
   try {
-    if (authorization) {
+    if (token) {
       return getAuthTokenId(req, res);
     }
 
@@ -64,14 +69,14 @@ const signinAuthentication = (db, bcrypt) => async (req, res) => {
 };
 
 const handleSignout = async (req, res) => {
-  const { authorization } = req.headers;
+  const token = getTokenFromHeader(req.headers.authorization);
 
-  if (!authorization) {
+  if (!token) {
     return res.status(400).json('No token provided');
   }
 
   try {
-    await deleteSession(authorization);
+    await deleteSession(token);
     return res.json({ success: 'true' });
   } catch (err) {
     console.error('Signout error:', err);

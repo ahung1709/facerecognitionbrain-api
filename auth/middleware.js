@@ -1,14 +1,15 @@
 const { getSession } = require('./session');
+const { getTokenFromHeader } = require('./utils');
 
 const requireAuth = async (req, res, next) => {
-  const { authorization } = req.headers;
+  const token = getTokenFromHeader(req.headers.authorization);
 
-  if (!authorization) {
+  if (!token) {
     return res.status(401).json('Unauthorized');
   }
 
   try {
-    const userId = await getSession(authorization);
+    const userId = await getSession(token);
 
     if (!userId) {
       return res.status(401).json('Unauthorized');

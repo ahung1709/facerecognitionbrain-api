@@ -1,6 +1,7 @@
 const { signToken } = require('./jwt');
 const { setSession, getSession, deleteSession } = require('./session');
 const { requireAuth } = require('./middleware');
+const { getTokenFromHeader } = require('./utils');
 
 const createSession = async (user) => {
   const { email, id } = user;
@@ -16,4 +17,5 @@ module.exports = {
   deleteSession,
   getSession,
   requireAuth,
+  getTokenFromHeader,
 };
