@@ -1,12 +1,12 @@
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
-const knex = require('knex');
 const morgan = require('morgan');
 
 require('dotenv').config();
 
 const { connectRedis } = require('./services/redis');
+const { connectPostgres } = require('./services/postgres');
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
@@ -14,43 +14,29 @@ const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const auth = require('./auth');
 
+const app = express();
+
 // Redis connection
 connectRedis()
   .then(() => console.log('Redis ready'))
   .catch(console.error);
 
 // Postgres connection
-let connection = null;
-
-// 1. Docker Compose local Postgres database
-if (process.env.POSTGRES_URI) {
-  connection = process.env.POSTGRES_URI;
-
-  // 2. Heroku Postgres OR local development using Heroku DB
-} else if (process.env.DATABASE_URL) {
-  connection = {
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-  };
-
-  // 3. No DB configured
-} else {
-  console.log('ERROR: No database connection string found.');
-  console.log('Expected POSTGRES_URI (Docker) or DATABASE_URL (Heroku).');
+let db;
+try {
+  db = connectPostgres();
+  console.log('Postgres ready');
+} catch (err) {
+  console.error(err.message);
   process.exit(1);
 }
 
-const db = knex({
-  client: 'pg',
-  connection,
-});
-
-const app = express();
-
+// Middleware
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(cors());
 
+// Routes
 app.get('/', (req, res) => {
   res.send('it is working!');
 });
