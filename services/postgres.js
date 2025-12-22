@@ -1,7 +1,11 @@
 const knex = require('knex');
 
+let db = null;
+
 const connectPostgres = () => {
-  let connection = null;
+  if (db) return db;
+
+  let connection;
 
   // 1. Docker Compose local Postgres database
   if (process.env.POSTGRES_URI) {
@@ -15,21 +19,14 @@ const connectPostgres = () => {
     };
 
     // 3. Production Heroku Postgres OR local development using fallback Heroku DB
-  } else if (process.env.DATABASE_URL) {
-    connection = {
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-    };
-
-    // 4. No DB configured
   } else {
     throw new Error(
       'ERROR: No database connection string found.' +
-        'Expected POSTGRES_URI (Docker), NEON_DATABASE_URL (Neon), or DATABASE_URL (Heroku).'
+        'Expected POSTGRES_URI (Docker) or NEON_DATABASE_URL (Neon).'
     );
   }
 
-  const db = knex({
+  db = knex({
     client: 'pg',
     connection,
   });
@@ -37,6 +34,12 @@ const connectPostgres = () => {
   return db;
 };
 
+const checkPostgres = async () => {
+  const db = connectPostgres();
+  await db.raw('SELECT 1');
+};
+
 module.exports = {
   connectPostgres,
+  checkPostgres,
 };

@@ -12,6 +12,7 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+const health = require('./controllers/health');
 const auth = require('./auth');
 
 const app = express();
@@ -32,7 +33,11 @@ try {
 }
 
 // Middleware
-app.use(morgan('combined'));
+app.use(
+  morgan('combined', {
+    skip: (req) => req.path === '/health' || req.path === '/health/full',
+  })
+);
 app.use(express.json());
 app.use(cors());
 
@@ -40,6 +45,8 @@ app.use(cors());
 app.get('/', (req, res) => {
   res.send('it is working!');
 });
+app.get('/health', health.basicHealth);
+app.get('/health/full', health.fullHealth);
 app.post('/signin', signin.signinAuthentication(db, bcrypt));
 app.post('/signout', signin.handleSignout);
 app.post('/register', (req, res) => {
