@@ -36,7 +36,10 @@ const fullHealth = async (req, res) => {
   res.status(httpStatus).json(result);
 };
 
+const ping = (req, res) => res.sendStatus(200);
+
 module.exports = {
   basicHealth,
   fullHealth,
+  ping,
 };

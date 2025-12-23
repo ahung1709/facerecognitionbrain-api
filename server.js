@@ -47,6 +47,7 @@ app.get('/', (req, res) => {
 });
 app.get('/health', health.basicHealth);
 app.get('/health/full', health.fullHealth);
+app.get('/health/ping', health.ping);
 app.post('/signin', signin.signinAuthentication(db, bcrypt));
 app.post('/signout', signin.handleSignout);
 app.post('/register', (req, res) => {
