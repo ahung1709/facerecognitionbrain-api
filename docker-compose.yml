@@ -12,7 +12,7 @@ services:
       - postgres
       - redis
     ports:
-      - '3000:3000'
+      - '3001:3001'
     volumes:
       - ./:/usr/src/face-recognition-brain-api
 
