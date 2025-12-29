@@ -18,7 +18,7 @@ const connectPostgres = () => {
       ssl: { rejectUnauthorized: false },
     };
 
-    // 3. Production Heroku Postgres OR local development using fallback Heroku DB
+    // 3. No DB configured
   } else {
     throw new Error(
       'ERROR: No database connection string found.' +
