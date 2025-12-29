@@ -4,6 +4,16 @@ This repository contains the backend REST API for the Face Recognition Brain app
 
 ---
 
+## 🌐 Live API
+
+Base URL:
+https://facerecognitionbrain-api-ulce.onrender.com/
+
+Health check:
+GET /health
+
+---
+
 ## 🧩 Related Repositories
 
 - 🔗 Frontend: https://github.com/ahung1709/facerecognitionbrain
@@ -149,7 +159,7 @@ These endpoints improve observability, enable automated uptime monitoring, and h
 - Docker
 - Docker Compose
 
-### Building the image and starting the container
+### Building the image and starting the containers
 
 ```bash
 docker-compose up --build
@@ -157,13 +167,13 @@ docker-compose up --build
 
 The API will be available at: http://localhost:3001
 
-### Starting the container without rebuilding the image
+### Starting the containers without rebuilding the image
 
 ```bash
 docker-compose up
 ```
 
-### Stopping the container
+### Stopping the containers
 
 ```bash
 docker-compose down
